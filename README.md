@@ -51,5 +51,5 @@ the field separator and the localization of the number format. The default value
 are chosen as sensible as possible and create a csv file that can be opened using Excel: it
 uses cp1252 as encoding (Windows standard), and semicolon as field separator. If you need a
 TSV file (tab separated values) you can use `-s \t`. The localization option uses no explicit
-default value - it uses the plattform's default locale. Please note that valid values for `-l`
-might be plattform depending. E.g. a german locale is `de_DE` on Linux but `German` on Windows...
+default value - it uses the platform's default locale. Please note that valid values for `-l`
+might be platform depending. E.g. a german locale is `de_DE` on Linux but `German` on Windows...
