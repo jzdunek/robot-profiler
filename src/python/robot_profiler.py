@@ -44,9 +44,9 @@ def calc_elapsed_time(status_tag):
     return __endtime - __starttime
 
 
-def profile(input_file_name, output_file_name, file_encoding, separator, loc):
+def analyse_output_xml(path_to_output_xml):
     keywords = {}
-    tree = cElementTree.parse(input_file_name)
+    tree = cElementTree.parse(path_to_output_xml)
     root = tree.getroot()
     for kw in root.findall(".//kw[@type='kw']"):
         name = get_keyword(kw)
@@ -58,6 +58,11 @@ def profile(input_file_name, output_file_name, file_encoding, separator, loc):
         else:
             durations = [duration]
         keywords.update({name: durations})
+    return keywords
+
+
+def profile(input_file_name, output_file_name, file_encoding, separator, loc):
+    keywords = analyse_output_xml(input_file_name)
 
     default_locale = locale.getlocale()
     locale.setlocale(locale.LC_ALL, loc)
