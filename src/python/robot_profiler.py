@@ -31,17 +31,17 @@ def convert_time(t):
 
 
 def get_keyword(kw_tag):
-    __name = kw_tag.attrib.get('name')
-    __name = __name[__name.rfind('=')+1:].strip()
-    return __name
+    name = kw_tag.attrib.get('name')
+    name = name[name.rfind('=')+1:].strip()
+    return name
 
 
 def calc_elapsed_time(status_tag):
-    __endtime = datetime.strptime(status_tag.attrib.get('endtime')+'000',
+    endtime = datetime.strptime(status_tag.attrib.get('endtime')+'000',
                                   '%Y%m%d %H:%M:%S.%f')
-    __starttime = datetime.strptime(status_tag.attrib.get('starttime')+'000',
+    starttime = datetime.strptime(status_tag.attrib.get('starttime')+'000',
                                     '%Y%m%d %H:%M:%S.%f')
-    return __endtime - __starttime
+    return endtime - starttime
 
 
 def analyse_output_xml(path_to_output_xml):
@@ -61,16 +61,16 @@ def analyse_output_xml(path_to_output_xml):
     return keywords
 
 
-def profile(input_file_name, output_file_name, file_encoding, separator, loc):
-    keywords = analyse_output_xml(input_file_name)
+def profile(infile_name, outfile_name, file_encoding, separator_character, loc):
+    keywords = analyse_output_xml(infile_name)
 
     default_locale = locale.getlocale()
     locale.setlocale(locale.LC_ALL, loc)
-    output_file = codecs.open(output_file_name, 'w', encoding=file_encoding)
+    output_file = codecs.open(outfile_name, 'w', encoding=file_encoding)
     output_file.write(
-        'Keyword' + separator +
-        'No of Occurrences' + separator +
-        'Time Sum' + separator +
+        'Keyword' + separator_character +
+        'No of Occurrences' + separator_character +
+        'Time Sum' + separator_character +
         'Time Avg' + '\n'
     )
     for kw in keywords:
@@ -80,9 +80,9 @@ def profile(input_file_name, output_file_name, file_encoding, separator, loc):
             duration += d
         avg_duration = duration / len(durations)
         output_file.write(
-            kw + separator +
-            str(len(durations)) + separator +
-            '{:n}'.format(convert_time(duration)) + separator +
+            kw + separator_character +
+            str(len(durations)) + separator_character +
+            '{:n}'.format(convert_time(duration)) + separator_character +
             '{:n}'.format(convert_time(avg_duration)) + '\n'
         )
     output_file.close()
@@ -108,14 +108,14 @@ if __name__ == '__main__':
                         default='',
                         help="Locale used for number formatting.")
     args = parser.parse_args()
-    __output_file_name = args.output_file_name
-    if __output_file_name is None:
-        __output_file_name = os.path.splitext(args.input_file_name)[0] + '.csv'
-    __separator = args.separator
-    if __separator == '\\t':
-        __separator = '\t'
+    output_file_name = args.output_file_name
+    if output_file_name is None:
+        output_file_name = os.path.splitext(args.input_file_name)[0] + '.csv'
+    separator = args.separator
+    if separator == '\\t':
+        separator = '\t'
     profile(args.input_file_name,
-            __output_file_name,
+            output_file_name,
             args.encoding,
-            __separator,
+            separator,
             args.locale)
