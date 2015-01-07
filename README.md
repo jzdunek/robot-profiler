@@ -15,6 +15,12 @@ Pre-requisites
 --------------
 * Python 2.x
 
+Pre-requisites for running the unit tests
+-----------------------------------------
+* Python 2.7
+* Robot Framework in PYTHONPATH
+* Project's source folder (src/python) in PYTHONPATH
+
 Installation
 ------------
 Copy the file `robot_profiler.py` into the module search path of your
@@ -53,3 +59,17 @@ uses cp1252 as encoding (Windows standard), and semicolon as field separator. If
 TSV file (tab separated values) you can use `-s \t`. The localization option uses no explicit
 default value - it uses the platform's default locale. Please note that valid values for `-l`
 might be platform depending. E.g. a german locale is `de_DE` on Linux but `German` on Windows...
+
+Running the unit tests
+----------------------
+The unit tests require that you installed the Robot Framework properly.
+Basically this means that the Robot Framework must be in your PYTHONPATH. Additionally the project's
+source folder `src/python` must be in your PYTHONPATH.
+
+For running the unit tests change the current directory to the test folder and execute the following command:
+
+`python -m unittest robot_profiler_unittests`
+
+If you prefer test discovery the command is:
+
+`python -m unittest discover -p *.py`
