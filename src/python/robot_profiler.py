@@ -94,7 +94,7 @@ def profile(infile_name, outfile_name, file_encoding, separator_character, loc):
     )
     for kw in keywords:
         no_of_occurrences, time_sum, time_avg = keywords[kw]
-        output_file.write(create_output_line(kw, no_of_occurrences, time_sum, time_avg) + '\n')
+        output_file.write(create_output_line(kw, no_of_occurrences, time_sum, time_avg, separator_character) + '\n')
     output_file.close()
     locale.setlocale(locale.LC_ALL, default_locale)
 
