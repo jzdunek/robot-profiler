@@ -5,7 +5,7 @@ __author__ = 'jan.zdunek'
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,15 +32,15 @@ def convert_time(t):
 
 def get_keyword(kw_tag):
     name = kw_tag.attrib.get('name')
-    name = name[name.rfind('=')+1:].strip()
+    name = name[name.rfind('=') + 1:].strip()
     return name
 
 
 def calc_elapsed_time(status_tag):
-    endtime = datetime.strptime(status_tag.attrib.get('endtime')+'000',
+    endtime = datetime.strptime(status_tag.attrib.get('endtime') + '000',
+                                '%Y%m%d %H:%M:%S.%f')
+    starttime = datetime.strptime(status_tag.attrib.get('starttime') + '000',
                                   '%Y%m%d %H:%M:%S.%f')
-    starttime = datetime.strptime(status_tag.attrib.get('starttime')+'000',
-                                    '%Y%m%d %H:%M:%S.%f')
     return endtime - starttime
 
 
@@ -61,8 +61,27 @@ def analyse_output_xml(path_to_output_xml):
     return keywords
 
 
+def evaluate_durations(keyword_data):
+    keyword_information = {}
+    for kw in keyword_data:
+        durations = keyword_data[kw]
+        number_of_durations = len(durations)
+        duration = timedelta()
+        for d in durations:
+            duration += d
+        average_duration = duration / number_of_durations
+        keyword_information.update({kw: [number_of_durations, duration, average_duration]})
+    return keyword_information
+
+
+def create_output_line(keyword, no_of_occurrences, time_total, time_average, separator_character):
+    return keyword + separator_character + str(no_of_occurrences) + separator_character + '{:n}'.format(
+        convert_time(time_total)) + separator_character + '{:n}'.format(convert_time(time_average))
+
+
 def profile(infile_name, outfile_name, file_encoding, separator_character, loc):
     keywords = analyse_output_xml(infile_name)
+    keywords = evaluate_durations(keywords)
 
     default_locale = locale.getlocale()
     locale.setlocale(locale.LC_ALL, loc)
@@ -74,17 +93,8 @@ def profile(infile_name, outfile_name, file_encoding, separator_character, loc):
         'Time Avg' + '\n'
     )
     for kw in keywords:
-        durations = keywords[kw]
-        duration = timedelta()
-        for d in durations:
-            duration += d
-        avg_duration = duration / len(durations)
-        output_file.write(
-            kw + separator_character +
-            str(len(durations)) + separator_character +
-            '{:n}'.format(convert_time(duration)) + separator_character +
-            '{:n}'.format(convert_time(avg_duration)) + '\n'
-        )
+        no_of_occurrences, time_sum, time_avg = keywords[kw]
+        output_file.write(create_output_line(kw, no_of_occurrences, time_sum, time_avg) + '\n')
     output_file.close()
     locale.setlocale(locale.LC_ALL, default_locale)
 

@@ -5,7 +5,7 @@ __author__ = 'jan.zdunek'
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
+# http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -154,6 +154,36 @@ Test Case 5 B
         self.assertEqual(2, len(keywords['BuiltIn.Sleep']), 'Wrong number of durations found.')
         self.assertTimedeltaAlmostEqual(timedelta(seconds=1), keywords['BuiltIn.Sleep'][0])
         self.assertTimedeltaAlmostEqual(timedelta(seconds=2), keywords['BuiltIn.Sleep'][1])
+
+    def test_evaluate_durations(self):
+        keyword_information = robot_profiler.evaluate_durations(
+            {'BuiltIn.Sleep': [timedelta(seconds=1), timedelta(seconds=1)],
+             'BuiltIn.No Operation': [timedelta(seconds=0)]})
+        self.assertEqual(2, len(keyword_information), 'Wrong number of evaluated keywords.')
+        self.assertIn('BuiltIn.Sleep', keyword_information)
+        self.assertListEqual([2, timedelta(seconds=2), timedelta(seconds=1)], keyword_information['BuiltIn.Sleep'])
+        self.assertIn('BuiltIn.No Operation', keyword_information)
+        self.assertListEqual([1, timedelta(seconds=0), timedelta(seconds=0)],
+                             keyword_information['BuiltIn.No Operation'])
+
+    def test_create_output_line_1(self):
+        line = robot_profiler.create_output_line("BuiltIn.Sleep", 2, timedelta(seconds=2), timedelta(seconds=1), ';')
+        fields = line.split(';')
+        self.assertEqual(4, len(fields))
+        self.assertEqual('BuiltIn.Sleep', fields[0])
+        self.assertEqual('2', fields[1])
+        self.assertEqual('2', fields[2])
+        self.assertEqual('1', fields[3])
+
+    def test_create_output_line_2(self):
+        line = robot_profiler.create_output_line("BuiltIn.Sleep", 2, timedelta(seconds=2, milliseconds=200),
+                                                 timedelta(seconds=1, milliseconds=100), ';')
+        fields = line.split(';')
+        self.assertEqual(4, len(fields))
+        self.assertEqual('BuiltIn.Sleep', fields[0])
+        self.assertEqual('2', fields[1])
+        self.assertEqual('2.2', fields[2])
+        self.assertEqual('1.1', fields[3])
 
 
 if __name__ == '__main__':
