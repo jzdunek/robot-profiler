@@ -175,14 +175,14 @@ The output.csv file should contain the expected data tab separated
 
 
 The output.csv file should contain the expected data with English number formatting
-    Check Robot Profiler output    decimal sign=.
+    Check Robot Profiler output    decimal sign=\.
 
 
 The output.csv file should contain the expected data with German number formatting
     Check Robot Profiler output    decimal sign=,
 
 
-Check Robot Profiler output    [Arguments]    ${encoding}=cp1252    ${separator}=;    ${decimal sign}=,
+Check Robot Profiler output    [Arguments]    ${encoding}=cp1252    ${separator}=;    ${decimal sign}=[,\.]
     ${content}=    Get File                       ${PROFILER OUTPUT}    encoding=${encoding}
     @{lines}=      Split To Lines                 ${content}
     ${count}=      Get Length                     ${lines}
@@ -201,13 +201,13 @@ Check Robot Profiler output    [Arguments]    ${encoding}=cp1252    ${separator}
                    Should Be Equal As Integers    4                            ${count}
                    Should Be Equal                Schlüsselwort Mit Ä und Ö    @{fields}[0]
                    Should Be Equal                1                            @{fields}[1]
-                   Should Start With              @{fields}[2]                 5${decimal sign}1
-                   Should Start With              @{fields}[3]                 5${decimal sign}1
+                   Should Match Regexp            @{fields}[2]                 ^5${decimal sign}1
+                   Should Match Regexp            @{fields}[3]                 ^5${decimal sign}1
 
     @{fields}=     Split String                   @{lines}[2]      separator=${separator}
     ${count}=      Get Length                     ${fields}
                    Should Be Equal As Integers    4                ${count}
                    Should Be Equal                BuiltIn.Sleep    @{fields}[0]
                    Should Be Equal                1                @{fields}[1]
-                   Should Start With              @{fields}[2]     5${decimal sign}1
-                   Should Start With              @{fields}[3]     5${decimal sign}1
+                   Should Match Regexp            @{fields}[2]     ^5${decimal sign}1
+                   Should Match Regexp            @{fields}[3]     ^5${decimal sign}1
