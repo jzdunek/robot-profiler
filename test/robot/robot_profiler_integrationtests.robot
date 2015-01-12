@@ -182,7 +182,7 @@ The output.csv file should contain the expected data with German number formatti
     Check Robot Profiler output    decimal sign=,
 
 
-Check Robot Profiler output    [Arguments]    ${encoding}=${ENCODING}    ${separator}=;    ${decimal sign}=,
+Check Robot Profiler output    [Arguments]    ${encoding}=cp1252    ${separator}=;    ${decimal sign}=,
     ${content}=    Get File                       ${PROFILER OUTPUT}    encoding=${encoding}
     @{lines}=      Split To Lines                 ${content}
     ${count}=      Get Length                     ${lines}
