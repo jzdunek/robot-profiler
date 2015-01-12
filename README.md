@@ -15,8 +15,8 @@ Pre-requisites
 --------------
 * Python 2.x
 
-Pre-requisites for running the unit tests
------------------------------------------
+Pre-requisites for running the automated tests
+----------------------------------------------
 * Python 2.7
 * Robot Framework in PYTHONPATH
 * Project's source folder (src/python) in PYTHONPATH
@@ -66,10 +66,21 @@ The unit tests require that you installed the Robot Framework properly.
 Basically this means that the Robot Framework must be in your PYTHONPATH. Additionally the project's
 source folder `src/python` must be in your PYTHONPATH.
 
-For running the unit tests change the current directory to the test folder and execute the following command:
+For running the unit tests change the current directory to the test folder `test/python` and execute the
+following command:
 
 `python -m unittest robot_profiler_unittests`
 
 If you prefer test discovery the command is:
 
 `python -m unittest discover -p *.py`
+
+Running the integration tests
+-----------------------------
+The project contains integration tests automated with the Robot Framework. Thus the Robot Framework needs to be
+installed. Additionally the project's source folder `src/python` must be in your PYTHONPATH.
+
+For running the integration test change the current directory to the test folder `test/robot` and execute the
+following command:
+
+`python -m robot.run robot_profiler_integrationtests.robot`
