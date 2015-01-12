@@ -75,6 +75,7 @@ Test Setup
     Clean Up Files
     Determine OS Encoding
     Determine Locales
+    Determine Tab Escaping
 
 
 Clean Up Files
@@ -97,6 +98,13 @@ Determine Locales
     ...                              ELSE                                               Create List    de_DE.utf8     en_US.utf8
     Set Test Variable    ${LOCALE DE}
     Set Test Variable    ${LOCALE EN}
+
+
+Determine Tab Escaping
+    ${passed}=    Run Keyword And Return Status    Environment Variable Should Be Set    OS
+    ${os}=    Set Variable If    ${passed}    %{OS}    Unix style
+    ${TAB}=    Set Variable If    '${os}'.startswith('Windows')    \\t    '\t'
+    Set Test Variable    ${TAB}
 
 
 Calling Robot Profiler without any arguments
@@ -140,7 +148,7 @@ Calling Robot Profiler with colon as separator and the output xml file as argume
 
 
 Calling Robot Profiler with tab as separator and the output xml file as arguments
-    ${rc}=    Run And Return Rc    python -m robot_profiler -s \\t ${ROBOT OUTPUT}
+    ${rc}=    Run And Return Rc    python -m robot_profiler -s ${TAB} ${ROBOT OUTPUT}
     Set Test Variable    ${rc}
 
 
