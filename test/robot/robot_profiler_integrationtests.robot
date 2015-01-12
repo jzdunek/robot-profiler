@@ -94,7 +94,7 @@ Determine Locales
     ${passed}=    Run Keyword And Return Status    Environment Variable Should Be Set    OS
     ${os}=    Set Variable If    ${passed}    %{OS}    Unix style
     ${LOCALE DE}    ${LOCALE EN}=    Run Keyword If    '${os}'.startswith('Windows')    Create List    German    UK
-    ...                              ELSE                                               Create List    de_DE     en_EN
+    ...                              ELSE                                               Create List    de_DE.utf8     en_US.utf8
     Set Test Variable    ${LOCALE DE}
     Set Test Variable    ${LOCALE EN}
 
