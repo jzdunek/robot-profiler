@@ -217,29 +217,9 @@ Check Robot Profiler output
     ${count}=      Get Length                     ${lines}
                    Should Be Equal As Integers    3                     ${count}
 
-    @{fields}=     Split String                   @{lines}[0]          separator=${separator}
-    ${count}=      Get Length                     ${fields}
-                   Should Be Equal As Integers    4                    ${count}
-                   Should Be Equal                Keyword              @{fields}[0]
-                   Should Be Equal                No of Occurrences    @{fields}[1]
-                   Should Be Equal                Time Sum             @{fields}[2]
-                   Should Be Equal                Time Avg             @{fields}[3]
-
-    @{fields}=     Split String                   @{lines}[1]                  separator=${separator}
-    ${count}=      Get Length                     ${fields}
-                   Should Be Equal As Integers    4                            ${count}
-                   Should Be Equal                Schlüsselwort Mit Ä und Ö    @{fields}[0]
-                   Should Be Equal                1                            @{fields}[1]
-                   Should Match Regexp            @{fields}[2]                 ^5${decimal sign}1
-                   Should Match Regexp            @{fields}[3]                 ^5${decimal sign}1
-
-    @{fields}=     Split String                   @{lines}[2]      separator=${separator}
-    ${count}=      Get Length                     ${fields}
-                   Should Be Equal As Integers    4                ${count}
-                   Should Be Equal                BuiltIn.Sleep    @{fields}[0]
-                   Should Be Equal                1                @{fields}[1]
-                   Should Match Regexp            @{fields}[2]     ^5${decimal sign}1
-                   Should Match Regexp            @{fields}[3]     ^5${decimal sign}1
+    Check Robot Profiler Headline    @{lines}[0]    ${separator}
+    Check Robot Profiler Dataline    @{lines}[1]    Schlüsselwort Mit Ä und Ö    1    5.1    5.1    ${separator}    ${decimal sign}
+    Check Robot Profiler Dataline    @{lines}[2]    BuiltIn.Sleep                1    5.1    5.1    ${separator}    ${decimal sign}
 
 
 The output.csv file should contain the expected data from two output xml files aggregated
@@ -248,7 +228,14 @@ The output.csv file should contain the expected data from two output xml files a
     ${count}=      Get Length                     ${lines}
                    Should Be Equal As Integers    3                     ${count}
 
-    @{fields}=     Split String                   @{lines}[0]          separator=;
+    Check Robot Profiler Headline    @{lines}[0]
+    Check Robot Profiler Dataline    @{lines}[1]    Schlüsselwort Mit Ä und Ö    2    10.2    5.1
+    Check Robot Profiler Dataline    @{lines}[2]    BuiltIn.Sleep                2    10.2    5.1
+
+
+Check Robot Profiler Headline
+    [Arguments]    ${line}    ${separator}=;
+    @{fields}=     Split String                   ${line}              separator=${separator}
     ${count}=      Get Length                     ${fields}
                    Should Be Equal As Integers    4                    ${count}
                    Should Be Equal                Keyword              @{fields}[0]
@@ -256,18 +243,15 @@ The output.csv file should contain the expected data from two output xml files a
                    Should Be Equal                Time Sum             @{fields}[2]
                    Should Be Equal                Time Avg             @{fields}[3]
 
-    @{fields}=     Split String                   @{lines}[1]                  separator=;
-    ${count}=      Get Length                     ${fields}
-                   Should Be Equal As Integers    4                            ${count}
-                   Should Be Equal                Schlüsselwort Mit Ä und Ö    @{fields}[0]
-                   Should Be Equal                2                            @{fields}[1]
-                   Should Match Regexp            @{fields}[2]                 ^10[,\.]2
-                   Should Match Regexp            @{fields}[3]                 ^5[,\.]1
 
-    @{fields}=     Split String                   @{lines}[2]      separator=;
+Check Robot Profiler Dataline
+    [Arguments]    ${line}    ${keyword}    ${occurrences}    ${time sum}    ${time avg}    ${separator}=;    ${decimal sign}=[,\.]
+    @{fields}=     Split String                   ${line}           separator=${separator}
     ${count}=      Get Length                     ${fields}
-                   Should Be Equal As Integers    4                ${count}
-                   Should Be Equal                BuiltIn.Sleep    @{fields}[0]
-                   Should Be Equal                2                @{fields}[1]
-                   Should Match Regexp            @{fields}[2]     ^10[,\.]2
-                   Should Match Regexp            @{fields}[3]     ^5[,\.]1
+                   Should Be Equal As Integers    4                 ${count}
+                   Should Be Equal                ${keyword}        @{fields}[0]
+                   Should Be Equal                ${occurrences}    @{fields}[1]
+    ${time}=       Replace String                 ${time sum}       .    ${decimal sign}
+                   Should Match Regexp            @{fields}[2]      ^${time}
+    ${time}=       Replace String                 ${time avg}       .    ${decimal sign}
+                   Should Match Regexp            @{fields}[3]      ^${time}
