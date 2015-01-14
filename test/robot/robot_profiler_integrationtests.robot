@@ -7,10 +7,10 @@ Library    String
 Test Setup    Test Setup
 
 *** Variables ***
-${ROBOT TEST CASE}    ${TEMPDIR}${/}SimpleRobotTest.txt
-${ROBOT OUTPUT}       ${TEMPDIR}${/}output.xml
-${ROBOT OUTPUT TWO}   ${TEMPDIR}${/}output2.xml
-${PROFILER OUTPUT}    ${TEMPDIR}${/}output.csv
+${ROBOT TEST CASE}     ${TEMPDIR}${/}SimpleRobotTest.txt
+${ROBOT OUTPUT}        ${TEMPDIR}${/}output.xml
+${ROBOT OUTPUT TWO}    ${TEMPDIR}${/}output2.xml
+${PROFILER OUTPUT}     ${TEMPDIR}${/}output.csv
 
 *** Test Cases ***
 Call Robot Profiler without arguments
@@ -20,13 +20,13 @@ Call Robot Profiler without arguments
 
 Call Robot Profiler with help argument
     When calling Robot Profiler with help argument
-    Then the command should succeed with an return code equal to zero
+    Then the command should succeed with a return code equal to zero
 
 
 Call Robot Profiler with default values
     Given a Robot Framework output xml file has been created
     When calling Robot Profiler with default values and the output xml file as arguments
-    Then the command should succeed with an return code equal to zero
+    Then the command should succeed with a return code equal to zero
     And a Robot Profiler output file output.csv should exist
     And the output.csv file should contain the expected data
 
@@ -34,7 +34,7 @@ Call Robot Profiler with default values
 Call Robot Profiler with non default encoding
     Given a Robot Framework output xml file has been created
     When calling Robot Profiler with utf-8 encoding and the output xml file as arguments
-    Then the command should succeed with an return code equal to zero
+    Then the command should succeed with a return code equal to zero
     And a Robot Profiler output file output.csv should exist
     And the output.csv file should contain the expected data encoded utf-8
 
@@ -42,7 +42,7 @@ Call Robot Profiler with non default encoding
 Call Robot Profiler with non default separator
     Given a Robot Framework output xml file has been created
     When calling Robot Profiler with colon as separator and the output xml file as arguments
-    Then the command should succeed with an return code equal to zero
+    Then the command should succeed with a return code equal to zero
     And a Robot Profiler output file output.csv should exist
     And the output.csv file should contain the expected data colon separated
 
@@ -50,7 +50,7 @@ Call Robot Profiler with non default separator
 Call Robot Profiler with tab as separator
     Given a Robot Framework output xml file has been created
     When calling Robot Profiler with tab as separator and the output xml file as arguments
-    Then the command should succeed with an return code equal to zero
+    Then the command should succeed with a return code equal to zero
     And a Robot Profiler output file output.csv should exist
     And the output.csv file should contain the expected data tab separated
 
@@ -58,7 +58,7 @@ Call Robot Profiler with tab as separator
 Call Robot Profiler with English locale
     Given a Robot Framework output xml file has been created
     When calling Robot Profiler with English locale and the output xml file as arguments
-    Then the command should succeed with an return code equal to zero
+    Then the command should succeed with a return code equal to zero
     And a Robot Profiler output file output.csv should exist
     And the output.csv file should contain the expected data with English number formatting
 
@@ -66,7 +66,7 @@ Call Robot Profiler with English locale
 Call Robot Profiler with German locale
     Given a Robot Framework output xml file has been created
     When calling Robot Profiler with German locale and the output xml file as arguments
-    Then the command should succeed with an return code equal to zero
+    Then the command should succeed with a return code equal to zero
     And a Robot Profiler output file output.csv should exist
     And the output.csv file should contain the expected data with German number formatting
 
@@ -75,7 +75,7 @@ Call Robot Profiler with multiple output XML files as input
     Given a Robot Framework output xml file has been created
     And another Robot Framework output xml file has been created
     When calling Robot Profiler with multiple output xml files as input
-    Then the command should succeed with an return code equal to zero
+    Then the command should succeed with a return code equal to zero
     And a Robot Profiler output file output.csv should exist
     And the output.csv file should contain the expected data from two output xml files aggregated
 
@@ -131,11 +131,12 @@ Calling Robot Profiler with help argument
     Set Test Variable    ${rc}
 
 
-The command should succeed with an return code equal to zero
+The command should succeed with a return code equal to zero
     Should Be Equal As Integers    0    ${rc}    Robot Profiler return code should be zero
 
 
-A Robot Framework output xml file has been created    [Arguments]    ${output xml file name}=${ROBOT OUTPUT}
+A Robot Framework output xml file has been created
+    [Arguments]    ${output xml file name}=${ROBOT OUTPUT}
     ${content}=    Set Variable    *** Testcase ***${\n}SimpleTest${\n}${SPACE}${SPACE}Schlüsselwort Mit Ä und Ö${\n}*** Keyword ***${\n}Schlüsselwort Mit Ä und Ö${\n}${SPACE}${SPACE}Sleep${SPACE}${SPACE}5.1s${\n}
     Create File    ${ROBOT TEST CASE}    ${content}
     ${rc}=    Run And Return Rc    python -m robot.run --report NONE --log NONE --output ${output xml file name} ${ROBOT TEST CASE}
@@ -166,12 +167,12 @@ Calling Robot Profiler with tab as separator and the output xml file as argument
     Set Test Variable    ${rc}
 
 
-calling Robot Profiler with English locale and the output xml file as arguments
+Calling Robot Profiler with English locale and the output xml file as arguments
     ${rc}=    Run And Return Rc    python -m robot_profiler -l ${LOCALE EN} ${ROBOT OUTPUT}
     Set Test Variable    ${rc}
 
 
-calling Robot Profiler with German locale and the output xml file as arguments
+Calling Robot Profiler with German locale and the output xml file as arguments
     ${rc}=    Run And Return Rc    python -m robot_profiler -l ${LOCALE DE} ${ROBOT OUTPUT}
     Set Test Variable    ${rc}
 
@@ -209,7 +210,8 @@ The output.csv file should contain the expected data with German number formatti
     Check Robot Profiler output    decimal sign=,
 
 
-Check Robot Profiler output    [Arguments]    ${encoding}=cp1252    ${separator}=;    ${decimal sign}=[,\.]
+Check Robot Profiler output
+    [Arguments]    ${encoding}=cp1252    ${separator}=;    ${decimal sign}=[,\.]
     ${content}=    Get File                       ${PROFILER OUTPUT}    encoding=${encoding}
     @{lines}=      Split To Lines                 ${content}
     ${count}=      Get Length                     ${lines}
@@ -238,6 +240,7 @@ Check Robot Profiler output    [Arguments]    ${encoding}=cp1252    ${separator}
                    Should Be Equal                1                @{fields}[1]
                    Should Match Regexp            @{fields}[2]     ^5${decimal sign}1
                    Should Match Regexp            @{fields}[3]     ^5${decimal sign}1
+
 
 The output.csv file should contain the expected data from two output xml files aggregated
     ${content}=    Get File                       ${PROFILER OUTPUT}    encoding=cp1252
