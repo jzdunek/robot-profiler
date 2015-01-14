@@ -9,6 +9,7 @@ Test Setup    Test Setup
 *** Variables ***
 ${ROBOT TEST CASE}    ${TEMPDIR}${/}SimpleRobotTest.txt
 ${ROBOT OUTPUT}       ${TEMPDIR}${/}output.xml
+${ROBOT OUTPUT TWO}   ${TEMPDIR}${/}output2.xml
 ${PROFILER OUTPUT}    ${TEMPDIR}${/}output.csv
 
 *** Test Cases ***
@@ -70,6 +71,15 @@ Call Robot Profiler with German locale
     And the output.csv file should contain the expected data with German number formatting
 
 
+Call Robot Profiler with multiple output XML files as input
+    Given a Robot Framework output xml file has been created
+    And another Robot Framework output xml file has been created
+    When calling Robot Profiler with multiple output xml files as input
+    Then the command should succeed with an return code equal to zero
+    And a Robot Profiler output file output.csv should exist
+    And the output.csv file should contain the expected data from two output xml files aggregated
+
+
 *** Keywords ***
 Test Setup
     Clean Up Files
@@ -125,11 +135,15 @@ The command should succeed with an return code equal to zero
     Should Be Equal As Integers    0    ${rc}    Robot Profiler return code should be zero
 
 
-A Robot Framework output xml file has been created
+A Robot Framework output xml file has been created    [Arguments]    ${output xml file name}=${ROBOT OUTPUT}
     ${content}=    Set Variable    *** Testcase ***${\n}SimpleTest${\n}${SPACE}${SPACE}Schlüsselwort Mit Ä und Ö${\n}*** Keyword ***${\n}Schlüsselwort Mit Ä und Ö${\n}${SPACE}${SPACE}Sleep${SPACE}${SPACE}5.1s${\n}
     Create File    ${ROBOT TEST CASE}    ${content}
-    ${rc}=    Run And Return Rc    python -m robot.run --report NONE --log NONE --output ${ROBOT OUTPUT} ${ROBOT TEST CASE}
+    ${rc}=    Run And Return Rc    python -m robot.run --report NONE --log NONE --output ${output xml file name} ${ROBOT TEST CASE}
     Should Be Equal As Integers    0    ${rc}    Robot failed - return code
+
+
+Another Robot Framework output xml file has been created
+    A Robot Framework output xml file has been created    ${ROBOT OUTPUT TWO}
 
 
 Calling Robot Profiler with default values and the output xml file as arguments
@@ -159,6 +173,11 @@ calling Robot Profiler with English locale and the output xml file as arguments
 
 calling Robot Profiler with German locale and the output xml file as arguments
     ${rc}=    Run And Return Rc    python -m robot_profiler -l ${LOCALE DE} ${ROBOT OUTPUT}
+    Set Test Variable    ${rc}
+
+
+Calling Robot Profiler with multiple output xml files as input
+    ${rc}=    Run And Return Rc    python -m robot_profiler ${ROBOT OUTPUT} ${ROBOT OUTPUT TWO}
     Set Test Variable    ${rc}
 
 
@@ -219,3 +238,33 @@ Check Robot Profiler output    [Arguments]    ${encoding}=cp1252    ${separator}
                    Should Be Equal                1                @{fields}[1]
                    Should Match Regexp            @{fields}[2]     ^5${decimal sign}1
                    Should Match Regexp            @{fields}[3]     ^5${decimal sign}1
+
+The output.csv file should contain the expected data from two output xml files aggregated
+    ${content}=    Get File                       ${PROFILER OUTPUT}    encoding=cp1252
+    @{lines}=      Split To Lines                 ${content}
+    ${count}=      Get Length                     ${lines}
+                   Should Be Equal As Integers    3                     ${count}
+
+    @{fields}=     Split String                   @{lines}[0]          separator=;
+    ${count}=      Get Length                     ${fields}
+                   Should Be Equal As Integers    4                    ${count}
+                   Should Be Equal                Keyword              @{fields}[0]
+                   Should Be Equal                No of Occurrences    @{fields}[1]
+                   Should Be Equal                Time Sum             @{fields}[2]
+                   Should Be Equal                Time Avg             @{fields}[3]
+
+    @{fields}=     Split String                   @{lines}[1]                  separator=;
+    ${count}=      Get Length                     ${fields}
+                   Should Be Equal As Integers    4                            ${count}
+                   Should Be Equal                Schlüsselwort Mit Ä und Ö    @{fields}[0]
+                   Should Be Equal                2                            @{fields}[1]
+                   Should Match Regexp            @{fields}[2]                 ^10[,\.]2
+                   Should Match Regexp            @{fields}[3]                 ^5[,\.]1
+
+    @{fields}=     Split String                   @{lines}[2]      separator=;
+    ${count}=      Get Length                     ${fields}
+                   Should Be Equal As Integers    4                ${count}
+                   Should Be Equal                BuiltIn.Sleep    @{fields}[0]
+                   Should Be Equal                2                @{fields}[1]
+                   Should Match Regexp            @{fields}[2]     ^10[,\.]2
+                   Should Match Regexp            @{fields}[3]     ^5[,\.]1

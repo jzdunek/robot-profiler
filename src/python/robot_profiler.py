@@ -1,5 +1,5 @@
 __author__ = 'jan.zdunek'
-# Copyright 2013 Jan Zdunek
+# Copyright 2013-2015 Jan Zdunek
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,6 +24,15 @@ from datetime import datetime
 from datetime import timedelta
 
 
+def parse_file_name_list(file_name_list):
+    assert type(file_name_list) is list
+
+    if file_name_list[-1].endswith('.xml'):
+        return file_name_list, os.path.splitext(file_name_list[0])[0]+'.csv'
+    else:
+        return file_name_list[0:-1], file_name_list[-1]
+
+
 def convert_time(t):
     seconds = t.seconds
     seconds += (t.microseconds / 1000000.0)
@@ -44,20 +53,23 @@ def calc_elapsed_time(status_tag):
     return endtime - starttime
 
 
-def analyse_output_xml(path_to_output_xml):
+def analyse_output_xml(file_name_list):
+    assert type(file_name_list) is list
+
     keywords = {}
-    tree = cElementTree.parse(path_to_output_xml)
-    root = tree.getroot()
-    for kw in root.findall(".//kw[@type='kw']"):
-        name = get_keyword(kw)
-        status = kw.find('./status')
-        duration = calc_elapsed_time(status)
-        if name in keywords:
-            durations = keywords[name]
-            durations.append(duration)
-        else:
-            durations = [duration]
-        keywords.update({name: durations})
+    for file_name in file_name_list:
+        tree = cElementTree.parse(file_name)
+        root = tree.getroot()
+        for kw in root.findall(".//kw[@type='kw']"):
+            name = get_keyword(kw)
+            status = kw.find('./status')
+            duration = calc_elapsed_time(status)
+            if name in keywords:
+                durations = keywords[name]
+                durations.append(duration)
+            else:
+                durations = [duration]
+            keywords.update({name: durations})
     return keywords
 
 
@@ -79,8 +91,8 @@ def create_output_line(keyword, no_of_occurrences, time_total, time_average, sep
         convert_time(time_total)) + separator_character + '{:n}'.format(convert_time(time_average))
 
 
-def profile(infile_name, outfile_name, file_encoding, separator_character, loc):
-    keywords = analyse_output_xml(infile_name)
+def profile(infile_name_list, outfile_name, file_encoding, separator_character, loc):
+    keywords = analyse_output_xml(infile_name_list)
     keywords = evaluate_durations(keywords)
 
     default_locale = locale.getlocale()
@@ -101,10 +113,9 @@ def profile(infile_name, outfile_name, file_encoding, separator_character, loc):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('input_file_name',
-                        help='The output.xml file to read from.')
-    parser.add_argument('output_file_name', nargs='?',
-                        help='The file to write the profiler data to.')
+    parser.add_argument('file_name',
+                        help='List of input files. If last file in list does not have xml as extension this file will be used as output file.',
+                        nargs='+')
     parser.add_argument('-e',
                         '--encoding',
                         default='cp1252',
@@ -118,13 +129,11 @@ if __name__ == '__main__':
                         default='',
                         help="Locale used for number formatting.")
     args = parser.parse_args()
-    output_file_name = args.output_file_name
-    if output_file_name is None:
-        output_file_name = os.path.splitext(args.input_file_name)[0] + '.csv'
+    input_file_name_list, output_file_name = parse_file_name_list(args.file_name)
     separator = args.separator
     if separator == '\\t':
         separator = '\t'
-    profile(args.input_file_name,
+    profile(input_file_name_list,
             output_file_name,
             args.encoding,
             separator,

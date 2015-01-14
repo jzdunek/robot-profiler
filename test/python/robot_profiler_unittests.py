@@ -43,7 +43,16 @@ class RobotProfilerUnitTests(unittest.TestCase):
     def run_and_analyse_robottest(self, testfilename):
         outputfile = tempfile.mkstemp(suffix='.xml')[1]
         robot.run(testfilename, report='NONE', log='NONE', output=outputfile)
-        keywords = robot_profiler.analyse_output_xml(outputfile)
+        keywords = robot_profiler.analyse_output_xml([outputfile])
+        return keywords
+
+    def run_and_analyse_multiple_robottests(self, list_of_testfilename):
+        list_of_output_xml_files = []
+        for testfilename in list_of_testfilename:
+            outputfile = tempfile.mkstemp(suffix='.xml')[1]
+            robot.run(testfilename, report='NONE', log='NONE', output=outputfile)
+            list_of_output_xml_files.append(outputfile)
+        keywords = robot_profiler.analyse_output_xml(list_of_output_xml_files)
         return keywords
 
     def test_analyse_output_xml_1(self):
@@ -155,6 +164,36 @@ Test Case 5 B
         self.assertTimedeltaAlmostEqual(timedelta(seconds=1), keywords['BuiltIn.Sleep'][0])
         self.assertTimedeltaAlmostEqual(timedelta(seconds=2), keywords['BuiltIn.Sleep'][1])
 
+    def test_analyse_output_xml_6(self):
+        test_case = """
+*** Settings ***
+Documentation    Test Case for the Robot Profiler: Multiple Test Cases Files - File A
+...              Checks that the profiler is able to gather data from multiple output xml files.
+
+*** Testcase ***
+Test Case 6 A
+    Sleep    1s
+        """
+        test_case_file_name_6a = self.create_test_case_file(test_case)
+
+        test_case = """
+*** Settings ***
+Documentation    Test Case for the Robot Profiler: Multiple Test Cases Files - File B
+...              Checks that the profiler is able to gather data from multiple output xml files.
+
+*** Testcase ***
+Test Case 6 B
+    Sleep    2s
+        """
+        test_case_file_name_6b = self.create_test_case_file(test_case)
+        keywords = self.run_and_analyse_multiple_robottests([test_case_file_name_6a, test_case_file_name_6b])
+
+        self.assertEqual(1, len(keywords), 'Wrong number of keywords found.')
+        self.assertIn('BuiltIn.Sleep', keywords)
+        self.assertEqual(2, len(keywords['BuiltIn.Sleep']), 'Wrong number of durations found.')
+        self.assertTimedeltaAlmostEqual(timedelta(seconds=1), keywords['BuiltIn.Sleep'][0])
+        self.assertTimedeltaAlmostEqual(timedelta(seconds=2), keywords['BuiltIn.Sleep'][1])
+
     def test_evaluate_durations(self):
         keyword_information = robot_profiler.evaluate_durations(
             {'BuiltIn.Sleep': [timedelta(seconds=1), timedelta(seconds=1)],
@@ -185,6 +224,27 @@ Test Case 5 B
         self.assertEqual('2.2', fields[2])
         self.assertEqual('1.1', fields[3])
 
+    def test_parse_file_name_list_1(self):
+        file_name_list = ['output_1.xml', 'output_2.xml', 'output_3.xml']
+        list_of_input_names, output_name = robot_profiler.parse_file_name_list(file_name_list)
+        self.assertListEqual(file_name_list, list_of_input_names)
+        self.assertEqual('output_1.csv', output_name)
+
+    def test_parse_file_name_list_2(self):
+        file_name_list = ['output_1.xml', 'output_2.xml', 'my_analysis.csv']
+        list_of_input_names, output_name = robot_profiler.parse_file_name_list(file_name_list)
+        self.assertListEqual(file_name_list[0:-1], list_of_input_names)
+        self.assertEqual('my_analysis.csv', output_name)
+
+    def test_parse_file_name_list_3(self):
+        with self.assertRaises(AssertionError):
+            robot_profiler.parse_file_name_list('output.xml')
+
+    def test_parse_file_name_list_4(self):
+        file_name_list = ['output.xml']
+        list_of_input_names, output_name = robot_profiler.parse_file_name_list(file_name_list)
+        self.assertListEqual(file_name_list, list_of_input_names)
+        self.assertEqual('output.csv', output_name)
 
 if __name__ == '__main__':
     unittest.main()
