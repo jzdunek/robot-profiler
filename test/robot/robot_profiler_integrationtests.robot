@@ -1,5 +1,5 @@
 *** Settings ***
-Documentation    Testing the Robot Profiler as a integrated program.
+Documentation    Testing the Robot Profiler as an integrated program.
 
 Library    OperatingSystem
 Library    String
