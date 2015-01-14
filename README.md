@@ -32,12 +32,13 @@ Usage
 -----
 ```
 usage: robot_profiler.py [-h] [-e ENCODING] [-s SEPARATOR] [-l LOCALE]
-                         input_file_name [output_file_name]
+                         file_name [file_name ...]
 ```
 ```
 positional arguments:
-  input_file_name       The output.xml file to read from.
-  output_file_name      The file to write the profiler data to.
+  file_name             List of input files. If last file in list does not
+                        have xml as extension this file will be used as output
+                        file.
 ```
 ```
 optional arguments:
@@ -49,8 +50,15 @@ optional arguments:
   -l LOCALE, --locale LOCALE
                         Locale used for number formatting.
 ```
-If no `output_file_name` is given the name (and path) of the input file name is taken with
-`.csv` as the new extension.
+You can pass a list of file names a positional arguments behind the named arguments. The Robot Profiler
+will treat all files as output.xml files from the Robot Framework. If the last file of the given list
+does not have .xml as extension that file name will be used as output file name for the Robot Profiler.
+Otherwise the path and the basename of the first file name in the list will be used as the output
+file name with `.csv` as the new extension. The command behaves this way to keep the commandline
+compatible with release 1.0.0.
+
+When passing multiple output xml files to the Robot Profiler it will read all files and aggregate the
+data into one output file.
 
 Parameters `-e`, `-s`, and `-l` are optional. They can be used to set the file encoding,
 the field separator and the localization of the number format. The default values for these parameters
