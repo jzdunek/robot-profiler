@@ -60,7 +60,7 @@ def analyse_output_xml(file_name_list):
     for file_name in file_name_list:
         tree = cElementTree.parse(file_name)
         root = tree.getroot()
-        for kw in root.findall(".//kw[@type='kw']"):
+        for kw in root.findall(".//kw"):
             name = get_keyword(kw)
             status = kw.find('./status')
             duration = calc_elapsed_time(status)
