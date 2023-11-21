@@ -15,7 +15,6 @@ __author__ = 'jan.zdunek'
 # limitations under the License.
 
 import tempfile
-import os
 import unittest
 from datetime import timedelta
 
@@ -28,8 +27,8 @@ class RobotProfilerUnitTests(unittest.TestCase):
     @staticmethod
     def create_test_case_file(test_case_content):
         test_case_file_descriptor, test_case_filename = tempfile.mkstemp(suffix='.txt', text=True)
-        os.write(test_case_file_descriptor, test_case_content)
-        os.close(test_case_file_descriptor)
+        with open(test_case_file_descriptor, "w", newline="") as file:
+            file.write(test_case_content)
         assert isinstance(test_case_filename, str)
         return test_case_filename
 
