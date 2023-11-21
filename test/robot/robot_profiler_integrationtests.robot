@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation    Testing the Robot Profiler as an integrated program.
 
-Library    robot.libraries.OperatingSystem
+Library    robot.libraries.OperatingSystem  WITH NAME   OperatingSystem
 Library    String
 Library    RPA.FileSystem   WITH NAME    FileSystem
 
@@ -96,9 +96,9 @@ Test Setup
 
 
 Clean Up Files
-    Remove File    ${ROBOT TEST CASE}
-    Remove File    ${ROBOT OUTPUT}
-    Remove File    ${PROFILER OUTPUT}
+    FileSystem.Remove File    ${ROBOT TEST CASE}
+    FileSystem.Remove File    ${ROBOT OUTPUT}
+    FileSystem.Remove File    ${PROFILER OUTPUT}
 
 
 Determine OS Encoding
@@ -145,7 +145,7 @@ The command should succeed with a return code equal to zero
 A Robot Framework output xml file has been created
     [Arguments]    ${output xml file name}=${ROBOT OUTPUT}
     ${content}=    Set Variable    *** Test Case ***${\n}SimpleTest${\n}${SPACE}${SPACE}Schlüsselwort Mit Ä und Ö${\n}*** Keyword ***${\n}Schlüsselwort Mit Ä und Ö${\n}${SPACE}${SPACE}Sleep${SPACE}${SPACE}5.1s${\n}
-    Create File    ${ROBOT TEST CASE}    ${content}
+    OperatingSystem.Create File    ${ROBOT TEST CASE}    ${content}
     ${rc}=    Run And Return Rc    python -m robot.run --report NONE --log NONE --output ${output xml file name} ${ROBOT TEST CASE}
     Should Be Equal As Integers    0    ${rc}    Robot failed - return code
 
