@@ -13,6 +13,12 @@ ${ROBOT OUTPUT}        ${TEMPDIR}${/}output.xml
 ${ROBOT OUTPUT TWO}    ${TEMPDIR}${/}output2.xml
 ${PROFILER OUTPUT}     ${TEMPDIR}${/}output.csv
 
+%{OS}                  # Define the environment variable to make linters happy
+${rc}                  # Return code set at runtime. Defined here to make linters happy.
+${TAB}                 # Define to make linters happy.
+${LOCALE EN}           # Define to make linters happy.
+${LOCALE DE}           # Define to make linters happy.
+
 *** Test Cases ***
 Call Robot Profiler without arguments
     When calling Robot Profiler without any arguments
