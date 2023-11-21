@@ -152,7 +152,7 @@ Test Case 4
 Documentation    Test Case for the Robot Profiler: Multiple Test Cases
 ...              Checks that the profiler is able to gather data from multiple test cases.
 
-*** Testcase ***
+*** Test Case ***
 Test Case 5 A
     Sleep    1s
 
@@ -174,7 +174,7 @@ Test Case 5 B
 Documentation    Test Case for the Robot Profiler: Multiple Test Cases Files - File A
 ...              Checks that the profiler is able to gather data from multiple output xml files.
 
-*** Testcase ***
+*** Test Case ***
 Test Case 6 A
     Sleep    1s
         """
@@ -185,7 +185,7 @@ Test Case 6 A
 Documentation    Test Case for the Robot Profiler: Multiple Test Cases Files - File B
 ...              Checks that the profiler is able to gather data from multiple output xml files.
 
-*** Testcase ***
+*** Test Case ***
 Test Case 6 B
     Sleep    2s
         """

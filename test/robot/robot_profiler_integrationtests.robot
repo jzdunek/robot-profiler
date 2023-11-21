@@ -137,7 +137,7 @@ The command should succeed with a return code equal to zero
 
 A Robot Framework output xml file has been created
     [Arguments]    ${output xml file name}=${ROBOT OUTPUT}
-    ${content}=    Set Variable    *** Testcase ***${\n}SimpleTest${\n}${SPACE}${SPACE}Schlüsselwort Mit Ä und Ö${\n}*** Keyword ***${\n}Schlüsselwort Mit Ä und Ö${\n}${SPACE}${SPACE}Sleep${SPACE}${SPACE}5.1s${\n}
+    ${content}=    Set Variable    *** Test Case ***${\n}SimpleTest${\n}${SPACE}${SPACE}Schlüsselwort Mit Ä und Ö${\n}*** Keyword ***${\n}Schlüsselwort Mit Ä und Ö${\n}${SPACE}${SPACE}Sleep${SPACE}${SPACE}5.1s${\n}
     Create File    ${ROBOT TEST CASE}    ${content}
     ${rc}=    Run And Return Rc    python -m robot.run --report NONE --log NONE --output ${output xml file name} ${ROBOT TEST CASE}
     Should Be Equal As Integers    0    ${rc}    Robot failed - return code
