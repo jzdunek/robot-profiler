@@ -42,7 +42,6 @@ def convert_time(t):
 
 def get_keyword(kw_tag):
     name = kw_tag.attrib.get('name')
-    name = name[name.rfind('=') + 1:].strip()
     return name
 
 
