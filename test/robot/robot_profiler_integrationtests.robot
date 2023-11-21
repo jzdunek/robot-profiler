@@ -1,8 +1,9 @@
 *** Settings ***
 Documentation    Testing the Robot Profiler as an integrated program.
 
-Library    OperatingSystem
+Library    robot.libraries.OperatingSystem
 Library    String
+Library    RPA.FileSystem   WITH NAME    FileSystem
 
 Test Setup    Test Setup
 
