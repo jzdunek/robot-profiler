@@ -1,8 +1,9 @@
 *** Settings ***
 Documentation    Testing the Robot Profiler as an integrated program.
 
-Library    OperatingSystem
+Library    robot.libraries.OperatingSystem  WITH NAME   OperatingSystem
 Library    String
+Library    RPA.FileSystem   WITH NAME    FileSystem
 
 Test Setup    Test Setup
 
@@ -11,6 +12,12 @@ ${ROBOT TEST CASE}     ${TEMPDIR}${/}SimpleRobotTest.txt
 ${ROBOT OUTPUT}        ${TEMPDIR}${/}output.xml
 ${ROBOT OUTPUT TWO}    ${TEMPDIR}${/}output2.xml
 ${PROFILER OUTPUT}     ${TEMPDIR}${/}output.csv
+
+%{OS}                  # Define the environment variable to make linters happy
+${rc}                  # Return code set at runtime. Defined here to make linters happy.
+${TAB}                 # Define to make linters happy.
+${LOCALE EN}           # Define to make linters happy.
+${LOCALE DE}           # Define to make linters happy.
 
 *** Test Cases ***
 Call Robot Profiler without arguments
@@ -89,9 +96,9 @@ Test Setup
 
 
 Clean Up Files
-    Remove File    ${ROBOT TEST CASE}
-    Remove File    ${ROBOT OUTPUT}
-    Remove File    ${PROFILER OUTPUT}
+    FileSystem.Remove File    ${ROBOT TEST CASE}
+    FileSystem.Remove File    ${ROBOT OUTPUT}
+    FileSystem.Remove File    ${PROFILER OUTPUT}
 
 
 Determine OS Encoding
@@ -137,8 +144,8 @@ The command should succeed with a return code equal to zero
 
 A Robot Framework output xml file has been created
     [Arguments]    ${output xml file name}=${ROBOT OUTPUT}
-    ${content}=    Set Variable    *** Testcase ***${\n}SimpleTest${\n}${SPACE}${SPACE}Schlüsselwort Mit Ä und Ö${\n}*** Keyword ***${\n}Schlüsselwort Mit Ä und Ö${\n}${SPACE}${SPACE}Sleep${SPACE}${SPACE}5.1s${\n}
-    Create File    ${ROBOT TEST CASE}    ${content}
+    ${content}=    Set Variable    *** Test Case ***${\n}SimpleTest${\n}${SPACE}${SPACE}Schlüsselwort Mit Ä und Ö${\n}*** Keyword ***${\n}Schlüsselwort Mit Ä und Ö${\n}${SPACE}${SPACE}Sleep${SPACE}${SPACE}5.1s${\n}
+    OperatingSystem.Create File    ${ROBOT TEST CASE}    ${content}
     ${rc}=    Run And Return Rc    python -m robot.run --report NONE --log NONE --output ${output xml file name} ${ROBOT TEST CASE}
     Should Be Equal As Integers    0    ${rc}    Robot failed - return code
 
@@ -217,9 +224,9 @@ Check Robot Profiler output
     ${count}=      Get Length                     ${lines}
                    Should Be Equal As Integers    3                     ${count}
 
-    Check Robot Profiler Headline    @{lines}[0]    ${separator}
-    Check Robot Profiler Dataline    @{lines}[1]    Schlüsselwort Mit Ä und Ö    1    5.1    5.1    ${separator}    ${decimal sign}
-    Check Robot Profiler Dataline    @{lines}[2]    BuiltIn.Sleep                1    5.1    5.1    ${separator}    ${decimal sign}
+    Check Robot Profiler Headline    ${lines}[0]    ${separator}
+    Check Robot Profiler Dataline    ${lines}[1]    Schlüsselwort Mit Ä und Ö    1    5.1    5.1    ${separator}    ${decimal sign}
+    Check Robot Profiler Dataline    ${lines}[2]    BuiltIn.Sleep                1    5.1    5.1    ${separator}    ${decimal sign}
 
 
 The output.csv file should contain the expected data from two output xml files aggregated
@@ -228,9 +235,9 @@ The output.csv file should contain the expected data from two output xml files a
     ${count}=      Get Length                     ${lines}
                    Should Be Equal As Integers    3                     ${count}
 
-    Check Robot Profiler Headline    @{lines}[0]
-    Check Robot Profiler Dataline    @{lines}[1]    Schlüsselwort Mit Ä und Ö    2    10.2    5.1
-    Check Robot Profiler Dataline    @{lines}[2]    BuiltIn.Sleep                2    10.2    5.1
+    Check Robot Profiler Headline    ${lines}[0]
+    Check Robot Profiler Dataline    ${lines}[1]    Schlüsselwort Mit Ä und Ö    2    10.2    5.1
+    Check Robot Profiler Dataline    ${lines}[2]    BuiltIn.Sleep                2    10.2    5.1
 
 
 Check Robot Profiler Headline
@@ -238,10 +245,10 @@ Check Robot Profiler Headline
     @{fields}=     Split String                   ${line}              separator=${separator}
     ${count}=      Get Length                     ${fields}
                    Should Be Equal As Integers    4                    ${count}
-                   Should Be Equal                Keyword              @{fields}[0]
-                   Should Be Equal                No of Occurrences    @{fields}[1]
-                   Should Be Equal                Time Sum             @{fields}[2]
-                   Should Be Equal                Time Avg             @{fields}[3]
+                   Should Be Equal                Keyword              ${fields}[0]
+                   Should Be Equal                No of Occurrences    ${fields}[1]
+                   Should Be Equal                Time Sum             ${fields}[2]
+                   Should Be Equal                Time Avg             ${fields}[3]
 
 
 Check Robot Profiler Dataline
@@ -249,9 +256,9 @@ Check Robot Profiler Dataline
     @{fields}=     Split String                   ${line}           separator=${separator}
     ${count}=      Get Length                     ${fields}
                    Should Be Equal As Integers    4                 ${count}
-                   Should Be Equal                ${keyword}        @{fields}[0]
-                   Should Be Equal                ${occurrences}    @{fields}[1]
+                   Should Be Equal                ${keyword}        ${fields}[0]
+                   Should Be Equal                ${occurrences}    ${fields}[1]
     ${time}=       Replace String                 ${time sum}       .    ${decimal sign}
-                   Should Match Regexp            @{fields}[2]      ^${time}
+                   Should Match Regexp            ${fields}[2]      ^${time}
     ${time}=       Replace String                 ${time avg}       .    ${decimal sign}
-                   Should Match Regexp            @{fields}[3]      ^${time}
+                   Should Match Regexp            ${fields}[3]      ^${time}

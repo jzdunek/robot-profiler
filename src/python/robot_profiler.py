@@ -1,4 +1,6 @@
+# noinspection SpellCheckingInspection
 __author__ = 'jan.zdunek'
+
 # Copyright 2013-2015 Jan Zdunek
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,7 +30,7 @@ def parse_file_name_list(file_name_list):
     assert type(file_name_list) is list
 
     if file_name_list[-1].endswith('.xml'):
-        return file_name_list, os.path.splitext(file_name_list[0])[0]+'.csv'
+        return file_name_list, os.path.splitext(file_name_list[0])[0] + '.csv'
     else:
         return file_name_list[0:-1], file_name_list[-1]
 
@@ -41,16 +43,20 @@ def convert_time(t):
 
 def get_keyword(kw_tag):
     name = kw_tag.attrib.get('name')
-    name = name[name.rfind('=') + 1:].strip()
     return name
 
 
+def get_library(kw_tag):
+    library = kw_tag.attrib.get('library')
+    return library
+
+
 def calc_elapsed_time(status_tag):
-    endtime = datetime.strptime(status_tag.attrib.get('endtime') + '000',
-                                '%Y%m%d %H:%M:%S.%f')
-    starttime = datetime.strptime(status_tag.attrib.get('starttime') + '000',
-                                  '%Y%m%d %H:%M:%S.%f')
-    return endtime - starttime
+    end_time = datetime.strptime(status_tag.attrib.get('endtime') + '000',
+                                 '%Y%m%d %H:%M:%S.%f')
+    start_time = datetime.strptime(status_tag.attrib.get('starttime') + '000',
+                                   '%Y%m%d %H:%M:%S.%f')
+    return end_time - start_time
 
 
 def analyse_output_xml(file_name_list):
@@ -60,16 +66,18 @@ def analyse_output_xml(file_name_list):
     for file_name in file_name_list:
         tree = cElementTree.parse(file_name)
         root = tree.getroot()
-        for kw in root.findall(".//kw[@type='kw']"):
+        for kw in root.findall(".//kw[@name]"):
             name = get_keyword(kw)
+            library = get_library(kw)
+            fullname = library + "." + name if library else name
             status = kw.find('./status')
             duration = calc_elapsed_time(status)
-            if name in keywords:
-                durations = keywords[name]
+            if fullname in keywords:
+                durations = keywords[fullname]
                 durations.append(duration)
             else:
                 durations = [duration]
-            keywords.update({name: durations})
+            keywords.update({fullname: durations})
     return keywords
 
 
@@ -108,13 +116,14 @@ def profile(infile_name_list, outfile_name, file_encoding, separator_character, 
         no_of_occurrences, time_sum, time_avg = keywords[kw]
         output_file.write(create_output_line(kw, no_of_occurrences, time_sum, time_avg, separator_character) + '\n')
     output_file.close()
-    locale.setlocale(locale.LC_ALL, default_locale)
+    locale.setlocale(locale.LC_ALL, '')
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('file_name',
-                        help='List of input files. If last file in list does not have xml as extension this file will be used as output file.',
+                        help='List of input files. If last file in list does not have xml as extension this file will '
+                             'be used as output file.',
                         nargs='+')
     parser.add_argument('-e',
                         '--encoding',

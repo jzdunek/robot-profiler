@@ -3,6 +3,15 @@ robot-profiler
 
 A Profiler for the Robot Framework.
 
+This is the Python 3.x fork of the original project [jzdunek/robot-profiler](https://github.com/jzdunek/robot-profiler).
+
+This fork has been tested with **Python 3.11** on **Windows 11** and is compatible with **Robot Framework 6.1.1**.
+No guarantees are made beyond that.
+
+It is likely not compatible with Robot Framework 7+,
+because the time format in `output.xml` will most likely be changed for that major version.
+That should only require a change in the method `calc_elapsed_time`, though.
+
 Overview
 --------
 The Robot Profiler analysis the output.xml file generated
@@ -13,11 +22,11 @@ are written to a file for later use with a spreadsheet.
 
 Pre-requisites
 --------------
-* Python 2.x
+* Python 3.x
 
 Pre-requisites for running the automated tests
 ----------------------------------------------
-* Python 2.7
+* Python 3.x
 * Robot Framework in PYTHONPATH
 * Project's source folder (src/python) in PYTHONPATH
 
@@ -53,7 +62,7 @@ optional arguments:
 You can pass a list of file names a positional arguments behind the named arguments. The Robot Profiler
 will treat all files as output.xml files from the Robot Framework. If the last file of the given list
 does not have .xml as extension that file name will be used as output file name for the Robot Profiler.
-Otherwise the path and the basename of the first file name in the list will be used as the output
+Otherwise, the path and the basename of the first file name in the list will be used as the output
 file name with `.csv` as the new extension. The command behaves this way to keep the commandline
 compatible with release 1.0.0.
 
@@ -71,7 +80,7 @@ might be platform depending. E.g. a german locale is `de_DE` on Linux but `Germa
 Running the unit tests
 ----------------------
 The unit tests require that you installed the Robot Framework properly.
-Basically this means that the Robot Framework must be in your PYTHONPATH. Additionally the project's
+Basically this means that the Robot Framework must be in your PYTHONPATH. Additionally, the project's
 source folder `src/python` must be in your PYTHONPATH.
 
 For running the unit tests change the current directory to the test folder `test/python` and execute the
@@ -85,8 +94,8 @@ If you prefer test discovery the command is:
 
 Running the integration tests
 -----------------------------
-The project contains integration tests automated with the Robot Framework. Thus the Robot Framework needs to be
-installed. Additionally the project's source folder `src/python` must be in your PYTHONPATH.
+The project contains integration tests automated with the Robot Framework. Thus, the Robot Framework needs to be
+installed. Additionally, the project's source folder `src/python` must be in your PYTHONPATH.
 
 For running the integration test change the current directory to the test folder `test/robot` and execute the
 following command:
