@@ -3,6 +3,15 @@ robot-profiler
 
 A Profiler for the Robot Framework.
 
+This is the Python 3.x fork of the original project [jzdunek/robot-profiler](https://github.com/jzdunek/robot-profiler).
+
+This fork has been tested with **Python 3.11** on **Windows 11** and is compatible with **Robot Framework 6.1.1**.
+No guarantees are made beyond that.
+
+It is likely not compatible with Robot Framework 7+,
+because the time format in `output.xml` will most likely be changed for that major version.
+That should only require a change in the method `calc_elapsed_time`, though.
+
 Overview
 --------
 The Robot Profiler analysis the output.xml file generated
@@ -13,11 +22,11 @@ are written to a file for later use with a spreadsheet.
 
 Pre-requisites
 --------------
-* Python 2.x
+* Python 3.x
 
 Pre-requisites for running the automated tests
 ----------------------------------------------
-* Python 2.7
+* Python 3.x
 * Robot Framework in PYTHONPATH
 * Project's source folder (src/python) in PYTHONPATH
 
