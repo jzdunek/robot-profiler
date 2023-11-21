@@ -1,3 +1,4 @@
+# noinspection SpellCheckingInspection
 __author__ = 'jan.zdunek'
 
 # Copyright 2015 Jan Zdunek
@@ -100,6 +101,7 @@ Test Case 2
         self.assertIn('BuiltIn.No Operation', keywords)
 
     def test_analyse_output_xml_3(self):
+        # noinspection SpellCheckingInspection
         test_case = """
 *** Keyword ***
 User Defined Keyword

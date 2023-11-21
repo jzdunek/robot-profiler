@@ -1,3 +1,4 @@
+# noinspection SpellCheckingInspection
 __author__ = 'jan.zdunek'
 
 # Copyright 2013-2015 Jan Zdunek
