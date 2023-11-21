@@ -46,6 +46,10 @@ def get_keyword(kw_tag):
     return name
 
 
+def get_library(kw_tag):
+    library = kw_tag.attrib.get('library')
+    return library
+
 
 def calc_elapsed_time(status_tag):
     end_time = datetime.strptime(status_tag.attrib.get('endtime') + '000',
@@ -62,16 +66,18 @@ def analyse_output_xml(file_name_list):
     for file_name in file_name_list:
         tree = cElementTree.parse(file_name)
         root = tree.getroot()
-        for kw in root.findall(".//kw[@type='kw']"):
+        for kw in root.findall(".//kw[@name]"):
             name = get_keyword(kw)
+            library = get_library(kw)
+            fullname = library + "." + name if library else name
             status = kw.find('./status')
             duration = calc_elapsed_time(status)
-            if name in keywords:
-                durations = keywords[name]
+            if fullname in keywords:
+                durations = keywords[fullname]
                 durations.append(duration)
             else:
                 durations = [duration]
-            keywords.update({name: durations})
+            keywords.update({fullname: durations})
     return keywords
 
 
