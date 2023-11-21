@@ -1,4 +1,5 @@
 __author__ = 'jan.zdunek'
+
 # Copyright 2015 Jan Zdunek
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,7 +25,8 @@ import robot_profiler
 
 
 class RobotProfilerUnitTests(unittest.TestCase):
-    def create_test_case_file(self, test_case_content):
+    @staticmethod
+    def create_test_case_file(test_case_content):
         test_case_file_descriptor, test_case_filename = tempfile.mkstemp(suffix='.txt', text=True)
         os.write(test_case_file_descriptor, test_case_content)
         os.close(test_case_file_descriptor)
@@ -40,13 +42,15 @@ class RobotProfilerUnitTests(unittest.TestCase):
         else:
             raise self.failureException('Assertion only takes timedelta objects.')
 
-    def run_and_analyse_robottest(self, testfilename):
+    @staticmethod
+    def run_and_analyse_robottest(testfilename):
         outputfile = tempfile.mkstemp(suffix='.xml')[1]
         robot.run(testfilename, report='NONE', log='NONE', output=outputfile)
         keywords = robot_profiler.analyse_output_xml([outputfile])
         return keywords
 
-    def run_and_analyse_multiple_robottests(self, list_of_testfilename):
+    @staticmethod
+    def run_and_analyse_multiple_robot_tests(list_of_testfilename):
         list_of_output_xml_files = []
         for testfilename in list_of_testfilename:
             outputfile = tempfile.mkstemp(suffix='.xml')[1]
@@ -186,7 +190,7 @@ Test Case 6 B
     Sleep    2s
         """
         test_case_file_name_6b = self.create_test_case_file(test_case)
-        keywords = self.run_and_analyse_multiple_robottests([test_case_file_name_6a, test_case_file_name_6b])
+        keywords = self.run_and_analyse_multiple_robot_tests([test_case_file_name_6a, test_case_file_name_6b])
 
         self.assertEqual(1, len(keywords), 'Wrong number of keywords found.')
         self.assertIn('BuiltIn.Sleep', keywords)
@@ -245,6 +249,7 @@ Test Case 6 B
         list_of_input_names, output_name = robot_profiler.parse_file_name_list(file_name_list)
         self.assertListEqual(file_name_list, list_of_input_names)
         self.assertEqual('output.csv', output_name)
+
 
 if __name__ == '__main__':
     unittest.main()

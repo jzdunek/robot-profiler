@@ -1,4 +1,5 @@
 __author__ = 'jan.zdunek'
+
 # Copyright 2013-2015 Jan Zdunek
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,7 +29,7 @@ def parse_file_name_list(file_name_list):
     assert type(file_name_list) is list
 
     if file_name_list[-1].endswith('.xml'):
-        return file_name_list, os.path.splitext(file_name_list[0])[0]+'.csv'
+        return file_name_list, os.path.splitext(file_name_list[0])[0] + '.csv'
     else:
         return file_name_list[0:-1], file_name_list[-1]
 
@@ -45,12 +46,13 @@ def get_keyword(kw_tag):
     return name
 
 
+
 def calc_elapsed_time(status_tag):
-    endtime = datetime.strptime(status_tag.attrib.get('endtime') + '000',
-                                '%Y%m%d %H:%M:%S.%f')
-    starttime = datetime.strptime(status_tag.attrib.get('starttime') + '000',
-                                  '%Y%m%d %H:%M:%S.%f')
-    return endtime - starttime
+    end_time = datetime.strptime(status_tag.attrib.get('endtime') + '000',
+                                 '%Y%m%d %H:%M:%S.%f')
+    start_time = datetime.strptime(status_tag.attrib.get('starttime') + '000',
+                                   '%Y%m%d %H:%M:%S.%f')
+    return end_time - start_time
 
 
 def analyse_output_xml(file_name_list):
@@ -114,7 +116,8 @@ def profile(infile_name_list, outfile_name, file_encoding, separator_character, 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('file_name',
-                        help='List of input files. If last file in list does not have xml as extension this file will be used as output file.',
+                        help='List of input files. If last file in list does not have xml as extension this file will '
+                             'be used as output file.',
                         nargs='+')
     parser.add_argument('-e',
                         '--encoding',
